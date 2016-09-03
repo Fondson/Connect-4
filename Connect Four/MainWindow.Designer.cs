@@ -152,14 +152,14 @@
                         difficultyText = "Hard";
                         break;
                     case 7:
-                        difficultyText = "Impossible";
+                        difficultyText = "Master";
                         break;
                 }
 
                 menuItemDifficulty.Text = difficultyText;
                 menuItemDifficulty.Tag = i;
                 menuItemDifficulty.Click += new System.EventHandler(this.difficultyClick);
-                if (i == 10) menuItemDifficulty.Checked = true;
+                if (i == 7) menuItemDifficulty.Checked = true;
                 this.menuDifficulty.MenuItems.Add(menuItemDifficulty);
                 if (i == 9) i--;
             }
