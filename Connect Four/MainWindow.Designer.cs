@@ -1,5 +1,4 @@
-﻿
-namespace Connect_Four
+﻿namespace Connect_Four
 {
     partial class frnGame
     {
@@ -18,7 +17,6 @@ namespace Connect_Four
         private System.Windows.Forms.MenuItem menuPlayAsRed;
         private System.Windows.Forms.MenuItem menuPlayAsBlack;
         private System.Windows.Forms.MenuItem menuDifficulty;
-        //private System.Windows.Forms.ComboBox difficultyComboBox;
 
         /// <summary>
         /// Required designer variable.
@@ -38,18 +36,12 @@ namespace Connect_Four
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
+        #region Windows Form Designer code
 
         public System.Windows.Forms.Button[] buttons = new System.Windows.Forms.Button[42];
-        public int[] colourState= new int[42];
+        public int[] colourState = new int[42];
         System.Windows.Forms.Label lblPlayer;
-        System.Windows.Forms.Label lblDifficulty;
-        System.Windows.Forms.Button btnAI;
-        System.Windows.Forms.Button btnAIFirst;
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code edi;tor.
-        /// </summary>
+
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
@@ -63,7 +55,6 @@ namespace Connect_Four
             this.menuPlayAsBlack = new System.Windows.Forms.MenuItem();
             this.menuPlayAsRed = new System.Windows.Forms.MenuItem();
             this.menuDifficulty = new System.Windows.Forms.MenuItem();
-            //this.difficultyComboBox = new System.Windows.Forms.ComboBox();
 
             System.Windows.Forms.Button currentButton;
             int x = 212;
@@ -88,7 +79,7 @@ namespace Connect_Four
                         colourState[counter - 1] = 0;
                     }
                     this.Controls.Add(currentButton);
-                    buttons[counter - 1]  = currentButton;
+                    buttons[counter - 1] = currentButton;
                     x -= 34;
                     counter += 1;
                 }
@@ -97,42 +88,14 @@ namespace Connect_Four
             }
 
             System.Windows.Forms.Button btnReset = new System.Windows.Forms.Button();
-            btnReset.Location = new System.Drawing.Point(x-18, y);
+            btnReset.Location = new System.Drawing.Point(x - 18, y);
             btnReset.Size = new System.Drawing.Size(50, 28);
             btnReset.Text = "Reset";
             btnReset.Click += new System.EventHandler(this.resetClick);
             this.Controls.Add(btnReset);
 
-            //btnAI = new System.Windows.Forms.Button();
-            //btnAI.Location = new System.Drawing.Point(5, y);
-            //btnAI.Size = new System.Drawing.Size(50, 28);
-            //btnAI.Text = "AI: On";
-            //btnAI.Click += new System.EventHandler(this.aiClick);
-            //this.Controls.Add(btnAI);
-
-            //lblDifficulty = new System.Windows.Forms.Label();
-            //lblDifficulty.Location = new System.Drawing.Point(10, y + 10);
-            //lblDifficulty.TextAlign = System.Drawing.ContentAlignment.TopLeft;
-            //lblDifficulty.Size = new System.Drawing.Size(50, 50);
-            //lblDifficulty.Text = "Difficulty:";
-            //this.Controls.Add(lblDifficulty);
-
-            //// 
-            //// difficultyComboBox
-            //// 
-            //this.difficultyComboBox.FormattingEnabled = true;
-            //this.difficultyComboBox.Location = new System.Drawing.Point(60, y+7);
-            //this.difficultyComboBox.Size = new System.Drawing.Size(30, 21);
-            //this.difficultyComboBox.DataSource = new int[] { 2, 3, 4, 5, 6, 7 };
-            //this.difficultyComboBox.SelectedItem = 7;
-            //this.difficultyComboBox.SelectedText = "7";
-            //this.difficultyComboBox.SelectedValue = 7;
-            //this.difficultyComboBox.Text = "7";
-            //this.difficultyComboBox.Enabled = aiState;
-            //this.Controls.Add(difficultyComboBox);
-
             lblPlayer = new System.Windows.Forms.Label();
-            lblPlayer.Location = new System.Drawing.Point(80, y+10);
+            lblPlayer.Location = new System.Drawing.Point(80, y + 10);
             lblPlayer.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             lblPlayer.Size = new System.Drawing.Size(100, 50);
             lblPlayer.Text = "Red's Turn";
@@ -171,33 +134,34 @@ namespace Connect_Four
             // menuDifficulty Items
             // 
             System.Windows.Forms.MenuItem menuItemDifficulty;
-            for (int i = 3; i < 9; i+=2)
+            for (int i = 4; i < 8; i ++)
             {
                 menuItemDifficulty = new System.Windows.Forms.MenuItem();
-                menuItemDifficulty.Index = i-3;
+                menuItemDifficulty.Index = i - 4;
 
-                string difficultyText="";
-                switch (i) {
-                    case 3:
+                string difficultyText = "";
+                switch (i)
+                {
+                    case 4:
                         difficultyText = "Easy";
                         break;
                     case 5:
                         difficultyText = "Average";
                         break;
-                    case 7:
+                    case 6:
                         difficultyText = "Hard";
                         break;
-                    case 8:
-                        difficultyText = "Master";
+                    case 7:
+                        difficultyText = "Impossible";
                         break;
                 }
-                
+
                 menuItemDifficulty.Text = difficultyText;
                 menuItemDifficulty.Tag = i;
                 menuItemDifficulty.Click += new System.EventHandler(this.difficultyClick);
-                if (i == 8) menuItemDifficulty.Checked = true;
+                if (i == 10) menuItemDifficulty.Checked = true;
                 this.menuDifficulty.MenuItems.Add(menuItemDifficulty);
-                if (i == 7) i--;
+                if (i == 9) i--;
             }
             // 
             // menuFirstMove
@@ -252,7 +216,7 @@ namespace Connect_Four
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.MaximizeBox = false;
             this.ClientSize = new System.Drawing.Size(247, 241);
-            
+
             this.Name = "frnGame";
             this.Text = "Connect Four";
             this.ResumeLayout(false);
@@ -261,7 +225,6 @@ namespace Connect_Four
 
         #endregion
 
-       
+
     }
 }
-

@@ -12,14 +12,15 @@ namespace Connect_Four
 {
     public partial class frnGame : Form
     {
-        private bool playerBlack=false;
+        #region initial variables
+        private bool playerBlack = false;
         private bool playerBlackPlayAs = false;
         private bool aiState = true;
         private bool playerFirst = false;
         private bool blackFirst = true;
         private int choice;
-        private bool lastDitch = false; //used to alter behaviour of AI in the case where it will inevitably lose
-        private int difficultyDepth=8;
+        private int difficultyDepth = 7;
+        #endregion
 
         public frnGame()
         {
@@ -32,6 +33,18 @@ namespace Connect_Four
 
         }
 
+        public void win(Color colour)
+        {
+            for (int i = 0; i < 42; i++)
+            {
+                buttons[i].Enabled = false;
+            }
+            lblPlayer.Text = colour + " WINS";
+            lblPlayer.ForeColor = colour;
+            MessageBox.Show(colour + " WINS");
+        }
+
+        #region Click listeners
         private void buttonClick(object sender, EventArgs e)
         {
             Button button = ((Button)sender);
@@ -157,17 +170,19 @@ namespace Connect_Four
                     lblPlayer.Text = "Red's Turn";
                     lblPlayer.ForeColor = Color.Red;
                 }
-                
-                if (checkWin(Int32.Parse(button.Name) - 1)) win(button.BackColor);
-                else {
 
-                    minimax(colourState[Int32.Parse(button.Name) - 1], Int32.Parse(button.Name) - 1, 0);
+                if (checkWin(Int32.Parse(button.Name) - 1)) win(button.BackColor);
+                else
+                {
+
+                    minimax(colourState[Int32.Parse(button.Name) - 1], Int32.Parse(button.Name) - 1, 0, Int32.MaxValue, Int32.MinValue);
                     if (!playerBlack)
                     {
                         buttons[choice].BackColor = Color.Black;
                         colourState[choice] = 2;
                     }
-                    else {
+                    else
+                    {
                         buttons[choice].BackColor = Color.Red;
                         colourState[choice] = 1;
                     }
@@ -180,12 +195,15 @@ namespace Connect_Four
                             colourState[Int32.Parse(buttons[choice].Name) + 6] = 3;
                         }
                     }
-                    else {
+                    else
+                    {
                         if (playerBlack) win(Color.Red);
-                        else win(Color.Black); }
+                        else win(Color.Black);
+                    }
                 }
             }
-            else {
+            else
+            {
 
                 if (playerBlack)
                 {
@@ -207,20 +225,11 @@ namespace Connect_Four
             }
         }
 
-        private bool checkWin(int position)
-        {
-            if (!checkWinHorizontal(position, 4, false))
-                if (!checkWinVertical(position, 4, false))
-                    if (!checkWinRightDiagonal(position, 4, false))
-                        if (!checkWinLeftDiagonal(position, 4, false)) return false;
-            return true;
-        }
-
         private void resetClick(object sender, EventArgs e)
         {
             playerBlack = playerBlackPlayAs;
             for (int i = 0; i < 42; i++)
-            { 
+            {
                 buttons[i].BackColor = Color.White;
                 colourState[i] = 0;
                 buttons[i].UseVisualStyleBackColor = true;
@@ -237,7 +246,6 @@ namespace Connect_Four
             }
             if (aiState)
             {
-                //minimax(colourState[3], 3, 0);
                 if (!playerFirst)
                 {
                     if (!playerBlack)
@@ -303,11 +311,12 @@ namespace Connect_Four
                 playerBlackPlayAs = true;
                 playerFirst = blackFirst;
             }
-            else {
+            else
+            {
                 playerBlackPlayAs = false;
                 playerFirst = !blackFirst;
             }
-            
+
             this.menuPlayAsBlack.Checked = playerBlackPlayAs;
             this.menuPlayAsRed.Checked = !playerBlackPlayAs;
 
@@ -324,7 +333,29 @@ namespace Connect_Four
             ((MenuItem)sender).Checked = true;
         }
 
-        #region Win Checkers
+        #endregion
+
+        #region Win Checkers   
+
+        private bool checkWin(int position)
+        {
+            if (!checkWinHorizontal(position, 4, false))
+                if (!checkWinVertical(position, 4, false))
+                    if (!checkWinRightDiagonal(position, 4, false))
+                        if (!checkWinLeftDiagonal(position, 4, false)) return false;
+            return true;
+        }
+
+        private int checkWinCount(int position)
+        {
+            int count = 0;
+            if (checkWinHorizontal(position, 4, false)) count += 1;
+            if (checkWinVertical(position, 4, false)) count += 1;
+            if (checkWinRightDiagonal(position, 4, false)) count += 1;
+            if (checkWinLeftDiagonal(position, 4, false)) count += 1;
+            return count;
+        }
+
         private bool checkWinHorizontal(int position, int count, bool checkedRight)
         {
             if (count > 1)
@@ -398,7 +429,7 @@ namespace Connect_Four
         {
             if (count > 1)
             {
-                bool canCheckUpRight = ( position % 7 != 0 ) && (position + 6 < 42)? true : false; ;
+                bool canCheckUpRight = (position % 7 != 0) && (position + 6 < 42) ? true : false; ;
                 if (canCheckUpRight && !checkedRightDiag)
                 {
                     if (colourState[position] == colourState[position + 6])
@@ -413,7 +444,7 @@ namespace Connect_Four
                 }
                 checkedRightDiag = true;
 
-                bool canCheckDownLeft = ( (position + 1) % 7 != 0 ) && (position - 6 > -1)? true : false;
+                bool canCheckDownLeft = ((position + 1) % 7 != 0) && (position - 6 > -1) ? true : false;
                 if (canCheckDownLeft && checkedRightDiag)
                 {
                     if (colourState[position] == colourState[position - 6])
@@ -433,7 +464,7 @@ namespace Connect_Four
         {
             if (count > 1)
             {
-                bool canCheckUpLeft =( (position + 1) % 7 != 0  ) && (position + 8 < 42)? true : false; ;
+                bool canCheckUpLeft = ((position + 1) % 7 != 0) && (position + 8 < 42) ? true : false; ;
                 if (canCheckUpLeft && !checkedLeftDiag)
                 {
                     if (colourState[position] == colourState[position + 8])
@@ -448,7 +479,7 @@ namespace Connect_Four
                 }
                 checkedLeftDiag = true;
 
-                bool canCheckDownRight = ( position % 7 != 0 ) && (position - 8 > -1)? true : false;
+                bool canCheckDownRight = (position % 7 != 0) && (position - 8 > -1) ? true : false;
                 if (canCheckDownRight && checkedLeftDiag)
                 {
                     if (colourState[position] == colourState[position - 8])
@@ -466,72 +497,89 @@ namespace Connect_Four
 
         #endregion
 
-        public void win(Color colour)
-        {
-            for (int i = 0; i < 42; i++)
-            {
-                buttons[i].Enabled = false;
-            }
-            lblPlayer.Text = colour + " WINS";
-            lblPlayer.ForeColor = colour;
-            MessageBox.Show(colour + " WINS");
-        }
-
         #region miniimax
-        private int minimax(int colour,int position,int depth)
+        private int minimax(int colour, int position, int depth, int upper, int lower)
         {
             if (checkWin(position))
             {
-                if (colour == 1)
-                {
-
-                }
-                return score(colour, depth);
+                return winScore(colour, depth);
             }
             depth += 1;
             if (depth < difficultyDepth)
             {
+                colour = colour == 2 ? 1 : 2;
                 List<int> scores = new List<int>();
                 List<int> moves = new List<int>();
 
-                for (int i = 0; i < 42; i++)
+                if ((!playerBlack && colour == 1) || (playerBlack && colour == 2))
                 {
-                    if (colourState[i] == 3)
+                    int tester;
+                    upper = int.MaxValue;
+                    for (int i = 0; i < 42; i++)
                     {
+                        if (colourState[i] == 3)
+                        {
+                            colourState[i] = colour;
+                            if (i < 35)
+                            {
+                                colourState[i + 7] = 3;
+                            }
+                            tester = minimax(colour, i, depth, upper, lower);
+                            moves.Add(i);
+                            upper = min(upper, tester);
+                            if (i < 35)
+                            {
+                                colourState[i + 7] = 0;
+                            }
+                            colourState[i] = 3;
+                            if (lower >= upper)
+                            {
+                                scores.Add(upper);
+                                break;
+                            }
+                            else
+                            {
+                                scores.Add(tester);
+                            }
+                        }
 
-                        colourState[i] = colour == 2 ? 1 : 2;
-                        if (i < 35)
-                        {
-                            colourState[i + 7] = 3;
-                        }
-                        scores.Add(minimax(colour == 2 ? 1 : 2, i, depth));
-                        moves.Add(i);
-                        if (i < 35)
-                        {
-                            colourState[i + 7] = 0;
-                        }
-                        colourState[i] = 3;
                     }
                 }
-
-                int straight = 0;
-                bool flag = false;
-                for (int i = 0; i < scores.Count; i++)
+                else
                 {
-                    if (scores[i] ==8)
+                    int tester;
+                    lower = int.MinValue;
+                    for (int i = 0; i < 42; i++)
                     {
-                        flag = true;
-                    }
-                    if (scores[i] == 8)
-                    {
-                        straight += 1;
-                        if (straight == scores.Count && colourState[choice]==3)
+                        if (colourState[i] == 3)
                         {
-                            lastDitch = true;
+                            colourState[i] = colour;
+                            if (i < 35)
+                            {
+                                colourState[i + 7] = 3;
+                            }
+                            tester = minimax(colour, i, depth, upper, lower);
+                            moves.Add(i);
+                            lower = max(lower, tester);
+                            if (i < 35)
+                            {
+                                colourState[i + 7] = 0;
+                            }
+                            colourState[i] = 3;
+                            if (lower >= upper)
+                            {
+                                scores.Add(lower);
+                                break;
+                            }
+                            else
+                            {
+                                scores.Add(tester);
+                            }
                         }
-                    }
-                }
 
+                    }
+
+                }
                 if (scores.Count == 1)
                 {
                     choice = moves[0];
@@ -539,96 +587,194 @@ namespace Connect_Four
                 }
                 else if (scores.Count > 1)
                 {
-                    Random rand = new Random();
-                    int startingIndex = scores.Count / 3 + rand.Next(scores.Count/3);
-                    if (flag)
-                    {
-                        if (depth != 1 && !lastDitch)
-                        {
-                            int maxScore;
-                            maxScore = scores[startingIndex];
-                            int maxIndex = startingIndex;
-                            for (int i = 0; i < scores.Count; i++)
-                            {
-                                if (scores[i] > maxScore)
-                                {
-                                    maxScore = scores[i];
-                                    maxIndex = i;
-                                }
-                            }
-                            choice = moves[maxIndex];
-                            return maxScore;
-                        }
-                        else
-                        {
-                            int minScore;
-                            minScore = scores[startingIndex];
-                            int minIndex = startingIndex;
-                            for (int i = 0; i < scores.Count; i++)
-                            {
-
-                                if (scores[i] < minScore)
-                                {
-                                    minScore = scores[i];
-                                    minIndex = i;
-                                }
-                            }
-
-                            if (!(lastDitch) && depth ==1)
-                            {//for debugging purposes
-                                choice = moves[minIndex];
-                            }
-
-                            if (lastDitch && depth == 1) lastDitch = false;
-
-                            return minScore;
-                        }
-                    }
-                    else
+                    int startingIndex = 0;
+                    if ((!playerBlack && colour == 1) || (playerBlack && colour == 2))
                     {
                         int minScore;
                         minScore = scores[startingIndex];
                         int minIndex = startingIndex;
                         for (int i = 0; i < scores.Count; i++)
-                        { 
+                        {
                             if (scores[i] < minScore)
                             {
                                 minScore = scores[i];
                                 minIndex = i;
                             }
                         }
-
-                        choice = moves[minIndex];
-                        
-                        if ( depth == 1)
+                        if (depth == 1)
                         {//for debugging purposes
                         }
 
+                        choice = moves[minIndex];
                         return minScore;
                     }
+                    else
+                    {
+                        int maxScore;
+                        maxScore = scores[startingIndex];
+                        int maxIndex = startingIndex;
+                        for (int i = 0; i < scores.Count; i++)
+                        {
+                            if (scores[i] > maxScore)
+                            {
+                                maxScore = scores[i];
+                                maxIndex = i;
+                            }
+                        }
+                        choice = moves[maxIndex];
 
-                }
-                else {
-                    return 0;
+                        if (depth == 1)
+                        {//for debugging purposes
+                        }
+
+                        return maxScore;
+                    }
                 }
             }
-            return 0;
+            return maxDepthScore(colour, position, depth);
         }
 
-        private int score(int colour, int depth)
+        #endregion
+
+        #region Score evaluators
+
+        private int winScore(int colour, int depth)
         {
-            if (!playerBlack)
+            if ((!playerBlack && colour == 1) || (playerBlack && colour == 2))
             {
-                if (colour == 1) return 10 - depth;
-                else return depth - 10;
+                return (depth * 400) - int.MaxValue;
             }
             else
             {
-                if (colour == 2) return 10 - depth;
-                else return depth - 10;
+                return int.MaxValue - (depth * 400);
             }
         }
 
+        private int maxDepthScore(int colour, int position, int depth)
+        {
+            if ((!playerBlack && colour == 1) && (playerBlack && colour == 2))
+                if (playerBlack)
+                    return -checkForThreats(2, 2) + checkForThreats(2, 1) - depth + evaluateContent(colour);
+                else
+                    return -checkForThreats(2, 1) + checkForThreats(2, 2) - depth + evaluateContent(colour);
+            else                                                            
+            {
+                if (playerBlack)
+                    return checkForThreats(2, 1) - checkForThreats(2, 2) + depth + evaluateContent(colour);
+                else
+                    return checkForThreats(2, 2) - checkForThreats(2, 1) + depth + evaluateContent(colour);
+            }                                                                         
+        }
+
+        #endregion
+
+        #region Gaussian utility
+        ////original table of values
+        //private static int[,] evaluationTable = new int[,]{ { 3, 4, 5, 7, 5, 4, 3 },
+        //                                                    { 4, 6, 8, 10, 8, 6, 4 },
+        //                                                    { 5, 8, 11, 13, 11, 8, 5 },
+        //                                                    { 5, 8, 11, 13, 11, 8, 5 },
+        //                                                    { 4, 6, 8, 10, 8, 6, 4 },
+        //                                                    { 3, 4, 5, 7, 5, 4, 3 } };
+
+
+        private int[] evaluationValues = new int[] {3, 4, 5, 7, 5, 4, 3,
+                                                    4, 6, 8, 10, 8, 6, 4,
+                                                    5, 8, 11, 13, 11, 8, 5,
+                                                    5, 8, 11, 13, 11, 8, 5,
+                                                    4, 6, 8, 10, 8, 6, 4,
+                                                    3, 4, 5, 7, 5, 4, 3};
+
+        //here is where the evaluation table is called 
+        public int evaluateContent(int colour)
+        {
+            int sum = 0;
+            for (int i = 0; i < 42; i++)
+            {
+                if (colourState[i] == colour)
+                {
+                    if (((!playerBlack && colour == 1)) || ((playerBlack && colour == 2)))
+                    {
+                        sum -= evaluationValues[i];
+                    }
+                    else
+                        sum += evaluationValues[i];
+                }
+                else if (colourState[i] == 1 || colourState[i] == 2)
+                {
+                    if (((!playerBlack && colour == 1)) || ((playerBlack && colour == 2)))
+                    {
+                        sum += evaluationValues[i];
+                    }
+                    else
+                        sum -= evaluationValues[i];
+                }
+            }
+            return sum;
+        }
+        #endregion
+
+        #region Threat calculation
+
+        private int checkForThreats(int depth, int colourToCheck)
+        {
+            if (depth == 0)
+            {
+                return 0;
+            }
+            else
+            {
+                int results = 0;
+                for (int i = 0; i < 42; i++)
+                {
+                    if (colourState[i] == 3)
+                    {
+                        colourState[i] = colourToCheck;
+                        if (i < 35)
+                        {
+                            colourState[i + 7] = 3;
+                        }
+                        results += checkForThreats(depth - 1, colourToCheck);
+                        int count = checkWinCount(i);
+                        results += (count * 70) / ((i + 7) / 7) / depth;
+                        if (i < 35)
+                        {
+                            colourState[i + 7] = 0;
+                        }
+                        colourState[i] = 3;
+                    }
+                }
+                return results;
+            }
+        }
+
+        #endregion
+
+        #region helper methods
+        private int min(int a, int b)
+        {
+            if (a < b)
+            {
+                return a;
+            }
+            else if (a > b)
+            {
+                return b;
+            }
+            return a;
+        }
+        private int max(int a, int b)
+        {
+            if (a < b)
+            {
+                return b;
+            }
+            else if (a > b)
+            {
+                return a;
+            }
+            return a;
+        }
         #endregion
     }
 }
